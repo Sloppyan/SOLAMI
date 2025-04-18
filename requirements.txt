@@ -1,0 +1,69 @@
+# pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu118
+clean-text
+librosa
+soundfile==0.12.1
+speechtokenizer==0.1.2
+tensorboard
+tqdm
+datasets
+tokenizers
+transformers
+omegaconf
+hydra-core
+pyrootutils
+flask
+gradio
+timm
+diffusers
+accelerate
+einops
+sentencepiece
+
+beartype==0.16.4
+nemo_text_processing
+# beartype uninstall typing extensions 4.9.0
+
+deepspeed==0.14
+fire
+bitsandbytes
+wandb
+lion_pytorch
+peft
+pytorch_lightning
+torchmetrics
+shortuuid
+chumpy
+rich
+matplotlib
+
+# for visualization
+# smplx==0.1.28
+# trimesh==3.9.24
+joblib
+h5py
+scikit-image
+ftfy
+more-itertools
+natsort
+
+moviepy
+## natsort uninstall decorator 5.1.1
+
+triangle==20230923
+roma
+debugpy
+jiwer
+azure-cognitiveservices-speech
+vocos
+pybase16384
+vector_quantize_pytorch
+av
+pydub
+openai
+
+
+# nlg-metricverse
+# # uninstall importlib_metadata-8.5.0  dill-0.3.8 click 8.1.7 multiprocess 0.70.16 datasets-3.0.1
+# bert-score
+# # spacy 3.8 will uninstall numpy 1.26.3
+# ## upgrade pip install -U openai-whisper
