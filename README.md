@@ -71,41 +71,64 @@ pip install numpy==1.26.4
 
 ## Data
 
-Data processing is very complex work involving numerous details. The overall framework is as follows. For processing code, please refer to TODO
+Data processing is very complex work involving numerous details. The overall framework is as follows. For processing code, please refer to [Datasets](./datasets/README.md).
 
-- Audio Data
-    - Pretrain Data Preprocessing
+- Speech Data
+    - Pretrain Data Preprocessing  (~ 300K items)
     - Character Data Preprocessing
 - Motion Data
-    - SMPL-X Preprocessing & Feature Extraction
+    - SMPL-X Preprocessing & Feature Extraction (~ 40K motion items)
     - Text Embedding Generation
     - Unified Data Item Generation
 - Multimodal Generation
-    - Topic Collection
-    - Multimodal Chat Data Synthesis
+    - Topic Collection  (~ 4K topics)
+    - Multimodal Chat Data Synthesis (~6K items)
 
-## Model
+## Model Training
 
-### Motion Tokenizer Training
-We use the codebase of [MotionGPT](https://github.com/OpenMotionLab/MotionGPT) to train the motion tokenizer. Besides we also use GPT-2 as foundation model for initial ablation studies. 
+Training SOLAMI requires three stages: motion tokenizer training, multitask pretraining, and multimodal chat sft. For details, please refer to [Models](./models/README.md).
 
-### Multitask Pretraining
+### Tokenizer Training
+We use the codebase of [MotionGPT](https://github.com/OpenMotionLab/MotionGPT) to train the motion tokenizer. 
+For hand or body tokenizer, we apply 1D convolution as the basic layer of VQVAE. For relative transform, we use MLP layers. 
+For speech tokenizer, we use the original pretrained tokenizer from[AnyGPT](https://github.com/OpenMOSS/AnyGPT).
+Besides the tokenizer training, we also use GPT-2 as foundation model for initial ablation studies. 
 
 
+### Multi-task Pre-training for Modality Alignment
 
-### Multimodal Chat SFT
+We adopt multi-task pretraining on LLM backbone to align motion, speech, and language.
+To achieve this, we train a 7B decoder-only LLM ([AnyGPT](https://github.com/OpenMOSS/AnyGPT)) on 32 V100s with [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) Zero3 for one day.
+During training, we fixed the params of motion & speech tokeniers and adopt full parameter finetuning.
+
+### Stage 3: Instruction Tuning for Multi-turn Conversation
+
+In this stage, we finetune the model with synthetic multimodal chat data to obtain social Vision-Language-Action model for immersive interaction with 3D Characters.
+SOLAMI model takes the user's motion and speech (character's observation) as input, and generate the character's motion and speech as response (character's action) based on the system prompt of character settings and dialogue context.
 
 ## Evaluation
 
-- Qualitative Evaluation
-- Quantitative Evaluation
+### Qualitative Evaluation
+
+```
+cd models/vla/anygpt/src/infer
+
+python conv_inference.py  --part 0 --period 4 --model_name_or_path $MODEL_PATH --output_dir $SAVE_DIR
+
+python conv_evaluation.py --save_gt True --data_dir $SAVE_DIR
+python speech_evaluation_gpt-4o.py --data_dir $SAVE_DIR
+```
+
+### Quantitative Evaluation
+
+
 
 ## VR Demo
 
 ### VR Client
 TODO
 
-### VR Serve
+### VR Server
 TODO
 
 ## Citation
