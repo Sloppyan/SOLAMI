@@ -7,20 +7,82 @@ Datasets include speech data, motion data, and multimodal chat data.
 
 
 ![Datasets](../assets/datasets.png)
+All the data are organized under the direction SOLAMI_data,
+
+```
+├── audio   #audio data
+│   ├── anyinstruct
+|   |   └── anyinstruct_merged.jsonl
+|   ├── character
+|   |   ├── character_audio     # original character voice data
+|   |   |   ├── asj_01.mp3
+|   |   |   └── ...  
+|   |   └── splited_pyannote_audio      # splited character voice data
+|   ├── commonvoice_en
+|   ├── commonvoice_processed
+|   |   └── commonvoice_merged.jsonl
+|   └── voice_prompt
+|       └── voices      # voices of each characters for voice cloning
+├── Conversation    # train data for stage 3 training
+│   ├── test_it_items.jsonl
+|   └── train_it_items.jsonl
+├── HumanML3D   # motion data
+│   ├── HumanML3D       # original repo of HumanML3D dataset
+│   ├── embeddings
+|   ├── processed_data
+|   └── unified_data
+├── SMPL_MODELS      
+│   └── smplx
+├── HumanTOMATO     # motion data
+├── Inter-X     # motion data
+├── IT_Speech       # speech generated
+│   └── raw_data
+├── mean_variance   # mean and variance of motion data
+│   └── all_mean_variance.npz
+└── tmp_data        # processed tokens
+    └── pretrained_tokens
+
+```
+
 
 ## Speech Dataset
-
-
+We collect common speech data for speech and text alignment, and character speech data for voice cloning of specific characters.
 
 ### Pretrain Speech Data
 
+We collect data from [CommonVoice](https://commonvoice.mozilla.org), [AnyInstruct](https://huggingface.co/datasets/fnlp/AnyInstruct), and synthesize speech data using TTS Methods ([XTTS_v2](https://huggingface.co/coqui/XTTS-v2) and Azure TTS).
+You can download the data from the resource.
+
+Then you should download the AnyGPT model in direction `extra`.
+
+We pre-tokenize the speech data for easy post-processing.
+
+```
+python speech_commonvoice_tokenization.py --part 0 --period 4 --gpu_id 0
+python speech_instruct_tokenization.py --part 0 --period 4 --gpu_id 0
+```
+After that, please merge the data together.
+```
+python merge_jsonl.py
+```
 
 
 ### Character Speech Data
 
+We collect character specific speech data from movies, blogs, and etc. and put them into `SOLAMI_data/audio/character/character_audio`.
+Then, we split the speech data into segments and select the repretative segments for voice cloning, saving in folder `SOLAMI_data/audio/voice_prompt/voices`.
+
+```
+python audio_segment_diarization.py --audio_path SOLAMI_data/audio/character/character_audio --output_dir SOLAMI_data/audio/character/splited_pyannote_audio
+```
 
 
 ## Motion Dataset
+
+First, please follow the instruction and license of current open-source motion datasets ([HumanML3D](https://github.com/EricGuo5513/HumanML3D), [Inter-X](https://github.com/liangxuy/Inter-X)) and download the data.
+Besides, please download the [HumanTOMATO](https://github.com/IDEA-Research/HumanTOMATO) project and [SMPL-X](https://smpl-x.is.tue.mpg.de/) models.
+Due to company permissions issues with the [DLP-MoCap](https://digital-life-project.com/) dataset, we are unable to publicly release the data.
+The motion data preprocessing consists of 5 steps.
 
 ### Step 1: smplx preprocess
 ```
@@ -133,7 +195,7 @@ python ./data_gen/topic_collection/topic_filter.py
 Codes are in direction `data_gen`.
 You can run the following command to generate synthetic data.
 ```
-python .data_gen/script_gen.py --profile_data_path $YOUR_PROFILE_PATH --config_path $YOUR_CONFIG --exper $EXPERIMENT_NAME --output_dir $OUTPUT_DIR
+python .data_gen/conv_data_gen.py --profile_data_path $YOUR_PROFILE_PATH --config_path $YOUR_CONFIG --exper $EXPERIMENT_NAME --output_dir $OUTPUT_DIR
 ```
 
 - `--profile_data_path `: The profile includes the topics, user settings etc. which are vital for generating diverse and infromational scripts.
