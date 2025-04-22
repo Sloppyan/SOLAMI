@@ -1,0 +1,59 @@
+# data generation configuration file
+
+# content type: 'common', 'motion imitation', 'instruction following', 'motion understanding'
+content_type: 'common' #'instruction following' # 'common'
+
+# datasets
+dataset_names: ['dlp', 'humanml3d', 'inter-x']  #['dlp', 'humanml3d', 'inter-x'] # 
+
+profile_settings:
+  topic_type: 'generated' # 'preset', 'generated', 'none'
+  space_des: 'default' # '', 'default', 'custom'
+  locomotion_des: 'default' # '', 'default', 'custom'
+  behavior_illustration: 'default' # '', 'default', 'custom'
+
+conversation_settings:
+  method: 'script completion' #'generate once' #'script completion' # 'script completion', 'agent conversation', 'generate once'
+  start_by_retrieved_motion: True
+  NUM_ROUNDS: 5
+  NUM_EXAMPLES: 1
+  refine:
+    top_k: 8
+
+
+llm_settings:
+  repeat_times: 5
+  model: 'gpt-4o'
+  api_type: 'public_202406' #
+  temperature: 1.
+  presence_penalty: 1.0
+
+text_embedding_settings:
+  model: 'text-embedding-3-large'
+  api_type: 'public_202406' # 'public', 'private'
+
+save_settings:
+  save_data: True
+  save_path: 'SOLAMI/datasets/multimodal_gen/data_gen/output'
+  save_format: 'json' # 'json', 'csv'
+
+
+logging_settings:
+  log_level: 'INFO'
+  log_file: 'data_gen.log'
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+
+datasets:
+  dlp:
+    text_embeddings: "SOLAMI_data/DLP-MoCap/embeddings/embeddings.npz"
+    dataset_items: "SOLAMI_data/DLP-MoCap/dataset_items_post.json"
+    dataset_root_dir: "SOLAMI_data/DLP-MoCap"
+  humanml3d:
+    text_embeddings: "SOLAMI_data/HumanML3D/embeddings/embeddings.npz"
+    dataset_items: "SOLAMI_data/HumanML3D/dataset_items_post.json"
+    dataset_root_dir: "SOLAMI_data/HumanML3D"
+  inter-x: 
+    text_embeddings: "SOLAMI_data/Inter-X/embeddings/embeddings.npz"
+    dataset_items: "SOLAMI_data/Inter-X/dataset_items_post.json"
+    dataset_root_dir: "SOLAMI_data/Inter-X"

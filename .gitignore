@@ -3,7 +3,6 @@
 .VSCodeCounter/
 /output/
 **/__pycache__/
-/datasets/
 deps/
 experiments/
 results/

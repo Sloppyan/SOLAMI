@@ -1,0 +1,9 @@
+API_info:
+  personal:
+    api_key: '$YOUR_API_KEY' # api key
+    base_url: 'https://api.openai.com/v1'
+    client: 'openai'
+  public_202406:
+    api_key: '$YOUR_API_KEY' # api key
+    base_url: '$YOUR_ENDPOINT' # endpoint url
+    client: 'azure'
