@@ -12,7 +12,7 @@ Repository: [SOLAMI-VRClient](https://github.com/EsukaStudio/SOLAMI-VRClient)
 
 The Data Relay acts as middleware to establish connections between the VR Client and the Model Server. The Relay communicates with the Model Server through HTTP requests and with the VR Client through Redis.
 
-Repository: [SOLAMI-VRRelay](https://github.com/AlanJiang98/SOLAMI/tree/Weiye-VRServer/demos/VRRelay)
+Repository: [SOLAMI-VRRelay](https://github.com/AlanJiang98/SOLAMI/demos/VRRelay)
 
 For security reasons, the VR Data Relay and the SOLAMI model are deployed on separate servers. Users can modify the code according to their requirements to improve communication efficiency.
 
