@@ -3,6 +3,20 @@ import numpy as np
 
 ## load all face data
 def load_npz_face_anim(npz_file_path):
+    """
+    Load all facial animation data from an NPZ file.
+    
+    This function reads facial animation blendshape values from an NPZ file,
+    processes the key names to match Unity's convention (camelCase),
+    and returns the data as a list of frame dictionaries.
+    
+    Args:
+        npz_file_path (str): Path to the NPZ file containing facial animation data
+        
+    Returns:
+        list: A list of dictionaries where each dictionary represents a frame
+              with blendshape values keyed by their names
+    """
     face_data = np.load(npz_file_path)
     excluded_columns = ['Timecode', 'BlendShapeCount', 'n_frames']
     relevant_keys = [key for key in face_data.files if key not in excluded_columns]
@@ -20,6 +34,20 @@ def load_npz_face_anim(npz_file_path):
 
 ## load only eyeBlink and jawOpen
 def load_face_anim(csv_file_path):
+    """
+    Load only specific facial animation data (eyeBlink and jawOpen) from a CSV file.
+    
+    This function extracts only the essential facial expressions (eye blinks and jaw opening)
+    from a CSV file, processes the column names to match Unity's convention (camelCase),
+    and returns the data as a list of frame dictionaries.
+    
+    Args:
+        csv_file_path (str): Path to the CSV file containing facial animation data
+        
+    Returns:
+        list: A list of dictionaries where each dictionary represents a frame
+              with only eyeBlinkLeft, eyeBlinkRight, and jawOpen values
+    """
     face_data = pd.read_csv(csv_file_path)
     
     # Drop the first 2 column (timecode, blendshape count)
@@ -37,5 +65,3 @@ def load_face_anim(csv_file_path):
         
 
     return face_frames
-
-# load_face_data("datasets/face_data/xiaoning_lzq.csv", None)

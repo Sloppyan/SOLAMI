@@ -20,7 +20,7 @@
         "fps": 30
     },
     "qingtong":{
-        "path": "demos/VRServer/datasets/anim_data/qingtong_example6.npz",
+        "path": "demos/VRServer/datasets/anim_data/qingtong_example.npz",
         "fps": 30
     },
     "dlp":{

@@ -17,11 +17,21 @@ character_dict = {
     }
 
 def audio2audio(input_path, output_path):
-    url = "https://humman-utils.diamond.zoe.sensetime.com/api/v1/pipeline/"
+    """
+    Process an audio file through the backend service and save the converted audio.
+    
+    This function sends an audio file to the backend service for processing
+    and saves the returned transformed audio.
+    
+    Args:
+        input_path (str): Path to the input audio file
+        output_path (str): Path to save the processed audio file
+    """
+    url = "" # The URL of your solami service
     with open(input_path, 'rb') as f:
         audio_data = f.read()
 
-    response = requests.post(url, files={'file': audio_data}, verify=False)  # 关闭 SSL 验证
+    response = requests.post(url, files={'file': audio_data}, verify=False)  # SSL verification disabled
 
     if response.status_code == 200:
         try:
@@ -36,7 +46,19 @@ def audio2audio(input_path, output_path):
         print("Response content:", response.content)
         
 def delete_session(url, session_id):
-    # url = "http://kub-api.zoe.sensetime.com/embodied/forward1/"
+    """
+    Delete a session from the backend service.
+    
+    Users need to deploy their own backend service for this functionality.
+    
+    Args:
+        url (str): Base URL of the backend service
+        session_id (str): ID of the session to delete
+        
+    Returns:
+        tuple: (response_content, error_message) - response_content is the JSON response,
+               error_message is None if successful
+    """
     try:
         response = requests.post(
             f"{url}/delete_session/",
@@ -52,7 +74,21 @@ def delete_session(url, session_id):
         
         
 def create_session(url, session_name, method, character_id):
-    # url = "http://kub-api.zoe.sensetime.com/embodied/forward1/"
+    """
+    Create a new session with the backend service.
+    
+    Users need to deploy their own backend service for this functionality.
+    
+    Args:
+        url (str): Base URL of the backend service
+        session_name (str): Name for the new session
+        method (str): Method type for the session (e.g., "echo")
+        character_id (str): ID of the character to use in the session
+        
+    Returns:
+        tuple: (session_id, error_message) - session_id if successful,
+               error_message is None if successful
+    """
     character = character_dict[character_id]
     print(f"start create_session:")
     print(f"{character_id} + {method}")
@@ -71,10 +107,15 @@ def create_session(url, session_name, method, character_id):
         print(str(e))
         return None, str(e)
     
-# content, exception = create_session("test", "echo", "char_0")
-# print(content)
 
 def download_file(url, output_path):
+    """
+    Download a file from a URL and save it to the specified path.
+    
+    Args:
+        url (str): URL of the file to download
+        output_path (str): Path where the downloaded file will be saved
+    """
     try:
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -84,9 +125,28 @@ def download_file(url, output_path):
         print(f"download file {url} successful: {output_path}")
     except Exception as e:
         print(f"Failed to download file from {url}: {str(e)}")
+        
     
 def interact(url, session_id, audio_user, motion_user, audio_ai, motion_ai):
-    # url = "http://kub-api.zoe.sensetime.com/embodied/forward1/"
+    """
+    Send audio and motion data to the backend service and receive processed responses.
+    
+    This function handles the communication with the backend service for sending
+    user audio/motion and receiving AI-generated audio/motion.
+    Users need to deploy their own backend service for this functionality.
+    
+    Args:
+        url (str): Base URL of the backend service
+        session_id (str): ID of the active session
+        audio_user (str): Path to the user's audio file to send
+        motion_user (str): Path to the user's motion file to send
+        audio_ai (str): Path to save the AI's audio response
+        motion_ai (str): Path to save the AI's motion response
+        
+    Returns:
+        tuple: (response_content, error_message) - response_content is the JSON response,
+               error_message is None if successful
+    """
     try:
         with open(audio_user, 'rb') as audio_file, open(motion_user, 'rb') as motion_file:
             files = {
@@ -102,29 +162,11 @@ def interact(url, session_id, audio_user, motion_user, audio_ai, motion_ai):
                 motion_url = url + content["motion_url"]
                 audio_url = url + content["audio_url"]
                 print("start download file!!!!")
-                # print(motion_url)
-                # print(audio_url)
                 download_file(motion_url, motion_ai)
                 download_file(audio_url, audio_ai)                
             return content, None
     except Exception as e:
         print(str(e))
         return None, str(e)
-    
-
-# session_id, exception = create_session("test", "echo", "char_0")  
-# if session_id:
-#     print("Session ID:", session_id)
-#     audio_user_path = r"E:/repos/redis_anim/datasets/audio/audio_user.wav"
-#     motion_user_path = r"E:/repos/redis_anim/datasets/anim_data/motion_user.npz"
-#     audio_ai_path = r"E:/repos/redis_anim/datasets/audio/audio_ai.wav"
-#     motion_ai_path = r"E:/repos/redis_anim/datasets/anim_data/motion_ai.npz"
-#     content, exception = interact(session_id, audio_user_path, motion_user_path, audio_ai_path, motion_ai_path)
-#     if content:
-#         print("Response content:", content)
-#     else:
-#         print("Error:", exception)
-# else:
-#     print("Session creation failed:", exception)
     
     
