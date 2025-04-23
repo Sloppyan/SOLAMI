@@ -1,4 +1,4 @@
-# SOLAMI: Social Vision-Language-Action Modeling for Immersive Interaction with 3D Autonomous Characters
+# [CVPR25] SOLAMI: Social Vision-Language-Action Modeling for Immersive Interaction with 3D Autonomous Characters
 
 <div align="center">
     <a href="https://solami-ai.github.io/" class="button"><b>[Homepage]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
@@ -7,7 +7,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 
-Official Code of SOLAMI for CVPR 2025 paper *SOLAMI: Social Vision-Language-Action Modeling for Immersive Interaction with 3D Autonomous Characters*.
+Official Code of CVPR 2025 paper *SOLAMI: Social Vision-Language-Action Modeling for Immersive Interaction with 3D Autonomous Characters*.
 
 
 ![Teaser](./assets/teaser.png)
