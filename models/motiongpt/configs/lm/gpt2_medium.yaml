@@ -1,0 +1,11 @@
+target: mGPT.archs.mgpt_lm.MLM
+params:
+  model_type: gpt2
+  model_path: ./deps/gpt2
+  stage: ${TRAIN.STAGE}
+  motion_codebook_size: ${model.params.codebook_size}
+  ablation: ${ABLATION}
+  motion_part: ${EXPER.motion_part}
+  interleaved: ${EXPER.token_interleaved}
+  framerate: ${EXPER.framerate}
+  max_length: ${EXPER.max_length}

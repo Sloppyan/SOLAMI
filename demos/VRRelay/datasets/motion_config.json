@@ -1,0 +1,34 @@
+{
+    "Idle": {
+        "path": "demos/VRRelay/datasets/anim_data/Chappie_Idle.json",
+        "fps": 30
+    },
+    "Wave": {
+        "path": "demos/VRRelay/datasets/anim_data/Chappie_Wave.json",
+        "fps": 30
+    },
+    "Flare": {
+        "path": "demos/VRRelay/datasets/anim_data/Chappie_Flare.json",
+        "fps": 30
+    },
+    "Run": {
+        "path": "demos/VRRelay/datasets/anim_data/Chappie_Run.json",
+        "fps": 30
+    },
+    "Remapped": {
+        "path": "demos/VRRelay/datasets/anim_data/Chappie_exampleremapped.json",
+        "fps": 30
+    },
+    "qingtong":{
+        "path": "demos/VRRelay/datasets/anim_data/qingtong_example.npz",
+        "fps": 30
+    },
+    "dlp":{
+        "path": "demos/VRRelay/datasets/anim_data/Smplx_test.npz",
+        "fps": 30
+    },
+    "AI":{
+        "path": "demos/VRRelay/datasets/anim_data/Smplx_ai.npz",
+        "fps": 30
+    }
+}

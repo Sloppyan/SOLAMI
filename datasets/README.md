@@ -7,7 +7,7 @@ Datasets include speech data, motion data, and multimodal chat data.
 
 
 ![Datasets](../assets/datasets.png)
-All the data are organized under the direction SOLAMI_data,
+All the data are organized under the direction `SOLAMI_data`,
 
 ```
 ├── audio   #audio data

@@ -6,15 +6,15 @@
 
 The VR Client is a standalone Unity project that can be compiled for Quest 2/3/Pro and above devices. It serves as the front-end interface for users to interact with the SOLAMI system in virtual reality.
 
-Repository: [SOLAMI-UnityClient](https://github.com/EsukaStudio/SOLAMI-UnityClient)
+Repository: [SOLAMI-VRClient](https://github.com/EsukaStudio/SOLAMI-VRClient)
 
-## VR Server
+## VR Data Relay
 
-The Server acts as middleware to establish connections between the VR Client and the algorithm backend. The Server communicates with the algorithm backend through HTTP requests and with the VR Client through Redis.
+The Data Relay acts as middleware to establish connections between the VR Client and the Model Server. The Relay communicates with the Model Server through HTTP requests and with the VR Client through Redis.
 
-Repository: [SOLAMI-VRServer](https://github.com/AlanJiang98/SOLAMI/tree/Weiye-VRServer/demos/VRServer)
+Repository: [SOLAMI-VRRelay](https://github.com/AlanJiang98/SOLAMI/tree/Weiye-VRServer/demos/VRRelay)
 
-For security reasons, the VR Server and the SOLAMI model are deployed on separate servers. Users can modify the code according to their requirements to improve communication efficiency.
+For security reasons, the VR Data Relay and the SOLAMI model are deployed on separate servers. Users can modify the code according to their requirements to improve communication efficiency.
 
 ## Audio-to-Face Algorithm
 

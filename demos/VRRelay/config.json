@@ -1,0 +1,11 @@
+{
+    "audio_user": "demos/VRRelay/datasets/audio/audio_user.wav",
+    "audio_ai": "demos/VRRelay/datasets/audio/audio_ai.wav",
+    "motion_user": "demos/VRRelay/datasets/anim_data/Smplx_user.npz",
+    "motion_ai": "demos/VRRelay/datasets/anim_data/Smplx_ai.npz",
+    "face_ai": "demos/VRRelay/datasets/face_data/face_ai.npz",
+    "start_up_char": "Vrmgirl",
+    "start_up_method": "dlp+motiongpt+retrieval",
+    "user_name": "JiangJianPin",
+    "server_address": "127.0.0.1"
+}

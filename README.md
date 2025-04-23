@@ -26,8 +26,10 @@ Official Code of SOLAMI for CVPR 2025 paper *SOLAMI: Social Vision-Language-Acti
 
 
 ## License and Usage Notices
-In this repository, we provide code for raw data preprocessing, multimodal data synthesis, SOLAMI model training, model evaluation, VR Unity client and server code for community reference.
-Considering that we used some company internal data to train the models in the original paper, we are not open-sourcing the raw data and trained models. Users can use their own collected data to train their deployable models on advanced end-to-end multimodal models.
+**Open Source Content and Influencing Factors**: In this repository, we provide code for raw data preprocessing, multimodal data synthesis, SOLAMI model training, model evaluation, VR Unity client and server code for community reference.
+Considering that we used some company internal data to train the models in the original paper, we are not open-sourcing the raw data and trained models. Users can use their own collected data to train their deployable models on advanced end-to-end multimodal models ([GLM-4-Voice](https://github.com/THUDM/GLM-4-Voice), [Qwen2.5-Omni](https://github.com/QwenLM/Qwen2.5-Omni), etc).
+In our VR engineering implementation, we use the company's intranet for forwarding, file reading and writing strategies to achieve communication between client and server. You can design your front-end and back-end strategies according to your infra.
+We are eager to open-source a universal version to everyone, but considering our limited time and organizational changes, our current code is still relatively rough. We ask for the community's understanding.
 
 
 **Usage and License Notices**: This project utilizes certain datasets, 3D assets, and checkpoints that are subject to their respective original licenses. Users must comply with all terms and conditions of these original licenses, including but not limited to the [OpenAI Terms of Use](https://openai.com/policies/terms-of-use) for generating synthetic data scripts, [Llama community license](https://ai.meta.com/llama/license/) for foundation language models, [SMPL-X](https://smpl-x.is.tue.mpg.de/) for original motion format, and [HumanML3D](https://github.com/EricGuo5513/HumanML3D), [Inter-X](https://github.com/liangxuy/Inter-X), [DLP-MoCap](https://digital-life-project.com/), [AnyInstruct](https://huggingface.co/datasets/fnlp/AnyInstruct), [CommonVoice](https://commonvoice.mozilla.org/) for data generation and model training. This project does not impose any additional constraints beyond those stipulated in the original licenses. Furthermore, users are reminded to ensure that their use of the dataset and checkpoints is in compliance with all applicable laws and regulations.
@@ -37,8 +39,7 @@ Considering that we used some company internal data to train the models in the o
 ## Contents
 - [Install](#install)
 - [Data](#data)
-- [Model Training](#model-training)
-- [Evaluation](#evaluation)
+- [Model](#model)
 - [VR Demo](#vr-demo)
 
 ## Install
@@ -84,7 +85,7 @@ Data processing is very complex work involving numerous details. The overall fra
     - Topic Collection  (~ 4K topics)
     - Multimodal Chat Data Synthesis (~6K items)
 
-## Model Training
+## Model
 
 Training SOLAMI requires three stages: motion tokenizer training, multitask pretraining, and multimodal chat sft. For details, please refer to [Models](./models/README.md).
 
@@ -101,25 +102,11 @@ We adopt multi-task pretraining on LLM backbone to align motion, speech, and lan
 To achieve this, we train a 7B decoder-only LLM ([AnyGPT](https://github.com/OpenMOSS/AnyGPT)) on 32 V100s with [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) Zero3 for one day.
 During training, we fixed the params of motion & speech tokeniers and adopt full parameter finetuning.
 
-### Stage 3: Instruction Tuning for Multi-turn Conversation
+### Instruction Tuning for Multi-turn Conversation
 
 In this stage, we finetune the model with synthetic multimodal chat data to obtain social Vision-Language-Action model for immersive interaction with 3D Characters.
 SOLAMI model takes the user's motion and speech (character's observation) as input, and generate the character's motion and speech as response (character's action) based on the system prompt of character settings and dialogue context.
 
-## Evaluation
-
-### Qualitative Evaluation
-
-```
-cd models/vla/anygpt/src/infer
-
-python conv_inference.py  --part 0 --period 4 --model_name_or_path $MODEL_PATH --output_dir $SAVE_DIR
-
-python conv_evaluation.py --save_gt True --data_dir $SAVE_DIR
-python speech_evaluation_gpt-4o.py --data_dir $SAVE_DIR
-```
-
-### Quantitative Evaluation
 
 
 
@@ -131,21 +118,38 @@ python speech_evaluation_gpt-4o.py --data_dir $SAVE_DIR
 
 The VR Client is a standalone Unity project that can be compiled for Quest 2/3/Pro and above devices. It serves as the front-end interface for users to interact with the SOLAMI system in virtual reality.
 
-Repository: [SOLAMI-UnityClient](https://github.com/EsukaStudio/SOLAMI-UnityClient)
+Repository: [SOLAMI-VRClient](https://github.com/EsukaStudio/SOLAMI-VRClient)
 
-### VR Server
+### VR Data Relay
 
-The Server acts as middleware to establish connections between the VR Client and the algorithm backend. The Server communicates with the algorithm backend through HTTP requests and with the VR Client through Redis.
+The Relay acts as middleware to establish connections between the VR Client and the Model Server. The Relay communicates with the Model Server through HTTP requests and with the VR Client through Redis.
 
-Repository: [SOLAMI-VRServer](https://github.com/AlanJiang98/SOLAMI/tree/Weiye-VRServer/demos/VRServer)
+Repository: [SOLAMI-VRRelay](https://github.com/AlanJiang98/SOLAMI/tree/Weiye-VRServer/demos/VRRelay)
 
-For security reasons, the VR Server and the SOLAMI model are deployed on separate servers. Users can modify the code according to their requirements to improve communication efficiency.
+For security reasons, the VR Relay and the SOLAMI model are deployed on separate servers. Users can modify the code according to their requirements to improve communication efficiency.
 
 ### Audio-to-Face Algorithm
 
 The audio-to-face animation algorithm used in this project needs to be deployed separately by users. For reference, you can check out the [UniTalker](https://github.com/X-niper/UniTalker) project, which provides a unified model for audio-driven 3D facial animation that can handle various audio domains including clean and noisy voices in different languages.
 
 UniTalker can generate realistic facial motion from different audio inputs and is compatible with the SOLAMI system when properly configured.
+
+
+### Model Server
+We deploy our model server on nodes with 2 GPUs. 
+In this repo, we provide SOLAMI deployment based on [vllm](https://github.com/vllm-project/vllm). 
+Additionally, we offer a simplified version of the [DLP method](https://github.com/AlanJiang98/DLP-SocioMind) with [llama2-7B-chat](http://huggingface.co/meta-llama/Llama-2-7b-chat-hf) model as the base LLM model, serving as a comparative LLM-Agent approach.
+
+```
+cd models/vla/anygpt/infer
+
+# solami model server
+python solami_server_model.py
+
+# llm-agent framework
+python llama2_server_model.py
+```
+
 
 ## Citation
 

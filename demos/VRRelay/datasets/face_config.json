@@ -1,0 +1,18 @@
+{
+    "Idle":{
+        "path": "demos/VRRelay/datasets/face_data/Idle.csv",
+        "fps": 30
+    },
+    "test":{
+        "path": "demos/VRRelay/datasets/face_data/xiaoning_lzq.csv",
+        "fps": 30
+    },
+    "a2f":{
+        "path": "demos/VRRelay/datasets/face_data/face_ai.npz",
+        "fps": 30
+    },
+    "DEMO":{
+        "path": ".npz",
+        "fps": 30
+    }
+}

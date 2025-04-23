@@ -1,0 +1,73 @@
+NAME: Pretrain_HumanML3D_GPT2_Local_Body_Hand_Sep_NoInterleave # Experiment names
+ACCELERATOR: 'gpu' # Devices optioncal: “cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “mps, “auto”
+NUM_NODES: 1 # Number of GPU nodes for distributed training
+DEVICE: [4, 5,6,7] # Index of gpus eg. [0] or [0,1,2,3]
+
+EXPER:
+  motion_part: "body_hand_sep" # "body", "body_hand_sep", "body_hand_bind"
+  motion_repre: "local cont6d" # "ske", "global cont6d", "local cont6d"
+  transform: True # 
+  token_interleaved: False #
+  token_transform: True #
+  framerate: 30
+  max_length: 256
+
+TRAIN:
+  #---------------------------------
+  STAGE: lm_pretrain # stage "vae" , "lm_pretrain", "lm_instruct"
+  #---------------------------------
+  NUM_WORKERS: 8 # Number of workers
+  BATCH_SIZE: 16 # Size of batches
+  END_EPOCH: 999 # End epoch
+  RESUME: '' # Resume training from this path
+  PRETRAINED: '' # Preatrained model path
+  # PRETRAINED_VAE: checkpoints/MotionGPT-base/motiongpt_s3_h3d.tar # Vae model path
+  PRETRAINED_VAE: SOLAMI/models/motiongpt/experiments/mgpt/VQVAE_HumanML3D_Local_Body_Hand_Sep/checkpoints/epoch=2999.ckpt
+
+  OPTIM:
+    target: AdamW
+    params:
+      lr: 1e-4
+      betas: [0.9, 0.99]
+      weight_decay: 0.0
+
+# Evaluating Configuration
+EVAL:
+  BATCH_SIZE: 32 # Evaluating Batch size
+  SPLIT: test
+
+TEST:
+  CHECKPOINTS: SOLAMI/models/motiongpt/experiments/mgpt/Pretrain_HumanML3D_GPT2_Local_Body_Hand_Sep_NoInterleave/checkpoints/last.ckpt
+  SPLIT: test
+  BATCH_SIZE: 32 # training Batch size
+  # SAVE_PREDICTIONS: True
+
+DATASET:
+  target: mGPT.data.HumanML3D.HumanML3DDataModule
+  CODE_PATH: TOKENS
+
+METRIC:
+  TYPE: ['MTMetrics']
+
+LOSS:
+  LAMBDA_FEATURE: 1.0
+  LAMBDA_VELOCITY: 2.0
+  LAMBDA_COMMIT: 0.02
+  LAMBDA_CLS: 1.0
+  ABLATION:
+    RECONS_LOSS: 'l1_smooth'
+
+model:
+  target: mGPT.models.mgpt.MotionGPT
+  params:
+    condition: 'text'
+    task: 't2m'
+    lm: ${lm.gpt2_medium}
+    motion_vae: ${vq.default}
+
+LOGGER:
+  TYPE: ['tensorboard']
+  VAL_EVERY_STEPS: 3
+  WANDB:
+    params:
+      project: motiongpt_local_sep_no_interleave

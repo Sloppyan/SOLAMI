@@ -17,6 +17,7 @@ cache/
 /models/vla/infer_output/
 /models/vla/output_models/
 wandb/
+/models/vla/anygpt/infer/digital_life_project_deploy
 /demos/test_tts_asr/processed/
 *.mp3
 *.pth
