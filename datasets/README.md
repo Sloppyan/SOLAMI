@@ -92,7 +92,29 @@ python raw_process_xxxxx_1.py --gpu_id 0 --period 4 --part 0
 Note that for parallel processing, we divide the dataset into {period} parts.
 In this step, we get joints (30 fps) from smplx parameters.
 
-### Step 2: feature extraction
+
+
+### Step 2: annotation pre process
+If you want to use the Inter-x dataset, you should follow the following annotation preprocessing pipeline.
+The dataset Inter-X has no annotation on a single person, so we first caption the motion sequences using LLM and it original captions.
+
+We divide the overall descriptions into seperate descriptions for each person using LLM.
+```
+python inter_x_annot_process.py --period 8 --part 0
+```
+Since the processing will cause some issues, such as misorder of actor and reactor, unreasonable divisions, we use LLM to revise the issues in a voting strategy.
+```
+python inter_x_annot_post_process.py --period 12 --part 0
+```
+
+After that, we build a json for each dataset with all the metadata information.
+```
+python datasets_items_gather_pre.py
+```
+Then you will get dataset_items_pre.json file for each dataset.
+
+
+### Step 3: feature extraction
 ```
 python raw_process_xxxxx_2.py --gpu_id 0 --period 4 --part 0
 ```
@@ -105,15 +127,7 @@ python calculate_mean_variance.py
 
 Calculate the mean and standard variance of the feature.
 
-### Step 3: Inter-X annotation process
-We first divide the overall descriptions into seperate descriptions for each person using LLM.
-```
-python inter_x_annot_process.py --period 8 --part 0
-```
-Since the processing will cause some issues, such as misorder of actor and reactor, unreasonable divisions, we use LLM to revise the issues in a voting strategy.
-```
-python inter_x_annot_post_process.py --period 12 --part 0
-```
+
 
 ### Step 4: embedding generation
 We generate text embeddings for all the text descriptions for retrieval (Multimodal dialogues generation, motion retrieval in 3D LLM-Agent).
@@ -126,10 +140,10 @@ python text_embedding_merge.py
 ```
 
 ### Step 5: unified dataset items generation
-To process all the data into the same format, run this script:
+To filter the illegal dataset items, we run this formulation below.
 
 ```
-python datasets_items_gather.py
+python datasets_items_gather_post.py
 ```
 
 The item of the dataset is as follow:

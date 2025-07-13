@@ -2,7 +2,7 @@ import os
 from tqdm import tqdm
 import json
 import logging
-from DLPMoCap import DLPMoCap_ActionDatabase
+# from DLPMoCap import DLPMoCap_ActionDatabase
 import numpy as np
 
 LENS = 1000000
@@ -110,6 +110,7 @@ def get_inter_x_items(save_path, logger):
     pass
          
 
+'''
 def get_dlp_items(save_path, logger):
     # split_dir = "SOLAMI_data/Inter-X/datasets"
     # annot_dir = "SOLAMI_data/Inter-X/texts_post_processed"
@@ -160,7 +161,7 @@ def get_dlp_items(save_path, logger):
     logger.info(f"Finish DLP dataset")
     logger.info(f"Total items: {len(dataset_items_info)}")
     pass
-
+'''
 
 
 def get_logger(save_path):

@@ -7,7 +7,7 @@ import os
 from tqdm import tqdm
 import json
 import logging
-from DLPMoCap import DLPMoCap_ActionDatabase
+# from DLPMoCap import DLPMoCap_ActionDatabase
 import numpy as np
 
 LENS = 1000000
@@ -302,6 +302,7 @@ def get_inter_x_items(save_path, logger):
          
 
 ## dlp dataset
+'''
 def get_dlp_items(save_path, logger):
     config = {
     "database": {
@@ -375,6 +376,7 @@ def get_dlp_items(save_path, logger):
     logger.info(f"Finish dlp dataset")
     logger.info(f"Total items: {len(dataset_items)}")
     pass
+    '''
 
 
 def get_logger(save_path):
