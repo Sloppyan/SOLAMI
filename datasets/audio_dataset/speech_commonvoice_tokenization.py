@@ -11,6 +11,7 @@ from einops import rearrange
 import re
 import json
 from m_utils.loggings import get_logger
+from m_utils.anything2token import modality_tokens_to_string
 import fire
 import torch.distributed as dist
 import debugpy
@@ -88,10 +89,13 @@ def process_speech_data(part=0, period=4, gpu_id=0, maxlen=150000):
         text = line['sentence']
         role = 'user'
         try:
-            speech_path = os.path.join(speech_dir, line['path'] + '.mp3')
+            speech_path = os.path.join(speech_dir, line['path'])
             speech_code = encode_speech(speech_path, logger)
-        except:
-            logger.error(f"Error processing {speech_path}")
+        # except:
+        #     logger.error(f"Error processing {speech_path}")
+        #     continue
+        except Exception as exc:
+            logger.error("Error processing %s: %s", speech_path, exc)
             continue
         speech_str = modality_tokens_to_string(speech_code, modality="speech")
         data_item = {

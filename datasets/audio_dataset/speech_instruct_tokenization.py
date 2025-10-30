@@ -7,6 +7,7 @@ import torchaudio
 from speechtokenizer import SpeechTokenizer
 from m_utils.prompter import *
 from m_utils.anything2token import *
+from m_utils.anything2token import modality_tokens_to_string
 from einops import rearrange
 import re
 import json
@@ -17,7 +18,7 @@ import debugpy
 from tqdm import tqdm
 
 
-def process_speech_data(part=0, period=4, gpu_id=0):
+def process_speech_data(part=0, period=4, gpu_id=0, max_items=None):
     DEVICE = 'cuda:%d'%gpu_id 
     speech_tokenizer_config = "SOLAMI/extra/AnyGPT-speech-modules/speechtokenizer/config.json"
     speech_tokenizer_path = "SOLAMI/extra/AnyGPT-speech-modules/speechtokenizer/ckpt.dev"
@@ -30,6 +31,10 @@ def process_speech_data(part=0, period=4, gpu_id=0):
     speech_tokenizer = SpeechTokenizer.load_from_checkpoint(speech_tokenizer_config, speech_tokenizer_path)        
     speech_tokenizer.eval()
     speech_tokenizer.to(device=DEVICE)
+
+    if max_items is not None:
+        if max_items <= 0:
+            raise ValueError("max_items must be a positive integer when provided.")
 
 
     def encode_speech(
@@ -58,6 +63,23 @@ def process_speech_data(part=0, period=4, gpu_id=0):
 
     line_counter = 0
     data_buffer = []
+    processed_total = 0
+    should_stop = False
+
+    def flush_buffer(buffer, remaining_limit=None):
+        """Write buffered items and return (written_count, remaining_buffer)."""
+        if not buffer or remaining_limit == 0:
+            return 0, buffer
+        if remaining_limit is None:
+            to_write = buffer
+            rest = []
+        else:
+            to_write = buffer[:remaining_limit]
+            rest = buffer[remaining_limit:]
+        with open(output_path, 'a', encoding='utf-8') as f:
+            for item in to_write:
+                f.write(json.dumps(item, ensure_ascii=False) + '\n')
+        return len(to_write), rest
     
     with open(speech_meta_path, 'r', encoding='utf-8') as f:
         total_lines = sum(1 for _ in f)
@@ -82,8 +104,11 @@ def process_speech_data(part=0, period=4, gpu_id=0):
                     speech_path = os.path.join(speech_dir, speech_path)
                     try:
                         speech_code = encode_speech(speech_path, logger)
-                    except:
-                        logger.error(f"Error processing {speech_path}")
+                    # except:
+                    #     logger.error(f"Error processing {speech_path}")
+                    #     break
+                    except Exception as exc:
+                        logger.error("Error processing %s: %s", speech_path, exc)
                         break
                     speech_str = modality_tokens_to_string(speech_code, modality="speech")
                     data_item = {
@@ -96,15 +121,20 @@ def process_speech_data(part=0, period=4, gpu_id=0):
             data_buffer.append(processed_data)
             
             if len(data_buffer) >= 50:
-                with open(output_path, 'a', encoding='utf-8') as f:
-                    for item in data_buffer:
-                        f.write(json.dumps(item, ensure_ascii=False) + '\n')
-                logger.info('Processed {} lines in the {}-th part'.format(line_counter, part))
-                data_buffer = []
-    if data_buffer:
-        with open(output_path, 'a', encoding='utf-8') as f_out:
-            for item in data_buffer:
-                f_out.write(json.dumps(item, ensure_ascii=False) + "\n")
+                remaining_limit = None if max_items is None else max_items - processed_total
+                written, data_buffer = flush_buffer(data_buffer, remaining_limit)
+                processed_total += written
+                if written:
+                    logger.info('Processed {} lines in the {}-th part (total items written: {})'.format(line_counter, part, processed_total))
+                if max_items is not None and processed_total >= max_items:
+                    should_stop = True
+                    break
+    if not should_stop and data_buffer and (max_items is None or processed_total < max_items):
+        remaining_limit = None if max_items is None else max_items - processed_total
+        written, _ = flush_buffer(data_buffer, remaining_limit)
+        processed_total += written
+        if written:
+            logger.info('Processed {} lines in the {}-th part (total items written: {})'.format(line_counter, part, processed_total))
 
 
 if __name__ == "__main__":
