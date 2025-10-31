@@ -19,6 +19,7 @@ cache/
 wandb/
 /models/vla/anygpt/infer/digital_life_project_deploy
 /demos/test_tts_asr/processed/
+/extra/
 *.mp3
 *.pth
 *.zip
