@@ -1,7 +1,12 @@
 import sys
 import os
-sys.path.append("SOLAMI/models/vla/")
-sys.path.append("SOLAMI/models/vla/anygpt/src")
+from pathlib import Path
+
+# Ensure AnyGPT utils (m_utils) are on PYTHONPATH
+FILE_DIR = Path(__file__).resolve().parent
+ANYGPT_DIR = FILE_DIR.parents[1] / "models" / "vla" / "anygpt"
+if str(ANYGPT_DIR) not in sys.path:
+    sys.path.insert(0, str(ANYGPT_DIR))
 import torch
 import torchaudio
 from speechtokenizer import SpeechTokenizer
