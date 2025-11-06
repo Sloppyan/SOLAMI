@@ -28,7 +28,7 @@ def process_speech_data(part=0, period=4, gpu_id=0):
     speech_tokenizer_path = "SOLAMI/extra/AnyGPT-speech-modules/speechtokenizer/ckpt.dev"
 
     speech_meta_path = "SOLAMI/extra/AnyInstruct/speech_conv/metadata.jsonl"
-    speech_dir = "SOLAMI/extra/AnyInstruct/speech_conv/speech"
+    speech_dir = "SOLAMI/extra/AnyInstruct/speech_conv/speech/speech"
     output_dir = "SOLAMI_data/audio/anyinstruct"
     output_path = os.path.join(output_dir, "anyinstruct_{}_{}.jsonl".format(part, period))
 
