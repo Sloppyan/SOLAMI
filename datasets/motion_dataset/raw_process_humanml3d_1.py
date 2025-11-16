@@ -52,25 +52,32 @@ model_paths = {
 
 full_smplh_mappings_to_smplx= {
     'ACCAD': 'ACCAD',
-    'BioMotionLab_NTroje': 'BMLrub',
+    # 'BioMotionLab_NTroje': 'BMLrub',
+    'BMLrub': 'BMLrub',
     'BMLmovi': 'BMLmovi',
     'CMU': 'CMU',
-    'DFaust_67': 'DFaust',
+    # 'DFaust_67': 'DFaust',
+    'DFaust': 'DFaust',
     'EKUT': 'EKUT',
     'Eyes_Japan_Dataset': 'Eyes_Japan_Dataset',
     'HumanEva': 'HumanEva',
     'KIT': 'KIT',
-    'MPI_HDM05': 'HDM05',
-    'MPI_mosh': 'Mosh',
+    # 'MPI_HDM05': 'HDM05',
+    # 'MPI_mosh': 'Mosh',
+    'HDM05': 'HDM05',
+    'Mosh': 'Mosh',
     'SFU': 'SFU',
-    'SSM_synced': 'SSM',
-    'TCD_handMocap': 'TCDHands',
+    # 'SSM_synced': 'SSM',
+    'SSM': 'SSM',
+    # 'TCD_handMocap': 'TCDHands',
+    'TCDHands': 'TCDHands',
     'TotalCapture': 'TotalCapture',
-    'Transitions_mocap': 'Transitions',
+    # 'Transitions_mocap': 'Transitions',
+    'Transitions': 'Transitions',
 }
 
-
-smplx_data_dir = 'kit_mocap/amass/smplx/'
+# smplx_data_dir = 'kit_mocap/amass/smplx/'
+smplx_data_dir = 'smplx/'
 no_mirror_save_root = 'SOLAMI_data/HumanML3D/HumanML3D_no_mirror/'
 index_path = 'SOLAMI_data/HumanML3D/HumanML3D/index.csv'
 mirror_save_root = 'SOLAMI_data/HumanML3D/HumanML3D_mirror'
@@ -127,11 +134,14 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
     folders = []
     dataset_names = []
     for root, dirs, files in os.walk(smplx_data_dir):
+        print(root)
         if dirname_include_dataset_name(root, smplh_mappings_to_smplx.values())[0]:
             folders.append(root)
             for name in files:
                 # TODO depends on your root
-                dataset_name = root.split('/')[6]
+                elements = root.split('/')
+                print("the res of root.split('/') is f{elements}")
+                dataset_name = elements[1]
                 if dataset_name in smplh_mappings_to_smplx.values():
                     if dataset_name not in dataset_names:
                         dataset_names.append(dataset_name)
@@ -140,8 +150,8 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
         pass
     pass
 
-    logger.info('Found %d files'%len(paths))
-    logger.info('Found %d folders'%len(folders))
+    print('Found %d files' % len(paths))
+    print('Found %d folders' % len(folders))
 
     save_folders = [folder.replace(smplx_data_dir, no_mirror_save_root) for folder in folders]
     for folder in save_folders:
