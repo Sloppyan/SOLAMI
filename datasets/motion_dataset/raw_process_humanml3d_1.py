@@ -114,6 +114,7 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
     ex_fps = fps
     
     smplh_mappings_to_smplx = copy.deepcopy(full_smplh_mappings_to_smplx)
+    dataset_name_candidates = set(smplh_mappings_to_smplx.values())
     
     keys_smplh = list(smplh_mappings_to_smplx.keys())
     for i, key in enumerate(keys_smplh):
@@ -140,7 +141,7 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
             for name in files:
                 # TODO depends on your root
                 elements = root.split('/')
-                print("the res of root.split('/') is f{elements}")
+                print(f"the res of root.split('/') is {elements}")
                 dataset_name = elements[1]
                 if dataset_name in smplh_mappings_to_smplx.values():
                     if dataset_name not in dataset_names:
@@ -150,9 +151,12 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
         pass
     pass
 
+    print('Found %d dataset_names' % len(dataset_names))
     print('Found %d files' % len(paths))
     print('Found %d folders' % len(folders))
-
+    for i in range(0, len(paths), 100):
+        print(i, paths[i])
+    
     save_folders = [folder.replace(smplx_data_dir, no_mirror_save_root) for folder in folders]
     for folder in save_folders:
         os.makedirs(folder, exist_ok=True)
@@ -210,7 +214,7 @@ def main(gpu_id, fps=30, period=4, part=0, debug=False):
             output = bm(**body_parms)
 
         joints = output.joints.cpu().numpy()
-        t_root_J = output.t_root_J.cpu().numpy()
+        t_root_J = np.zeros_like(bdata_trans)
         pose_seq_np_n = np.dot(joints, trans_matrix)
         
         data_save = {
