@@ -26,8 +26,8 @@ def get_humanml3d_items(save_path, logger):
         with open(save_path, 'r') as f:
             dataset_items = json.load(f)
     
-    annot_dir = "SOLAMI_data/HumanML3D/HumanML3D"
-    joints_dir = "SOLAMI_data/HumanML3D/HumanML3D_mirror"
+    annot_dir = "SOLAMI_data/HumanML3D/HumanML3D/HumanML3D"
+    joints_dir = "SOLAMI_data/HumanML3D/HumanML3D_no_mirror"
     
     
     train_path = os.path.join(annot_dir, 'train.txt')
