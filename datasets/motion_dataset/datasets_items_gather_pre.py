@@ -409,9 +409,9 @@ if __name__ == '__main__':
     save_path = 'SOLAMI_data/HumanML3D/dataset_items_pre.json'
     get_humanml3d_items(save_path, logger)
     
-    save_path = 'SOLAMI_data/Inter-X/dataset_items_pre.json'
-    get_inter_x_items(save_path, logger)
+    # save_path = 'SOLAMI_data/Inter-X/dataset_items_pre.json'
+    # get_inter_x_items(save_path, logger)
     
-    save_path = 'SOLAMI_data/DLP-MoCap/dataset_items_pre.json'
-    get_dlp_items(save_path, logger)
+    # save_path = 'SOLAMI_data/DLP-MoCap/dataset_items_pre.json'
+    # get_dlp_items(save_path, logger)
     pass
