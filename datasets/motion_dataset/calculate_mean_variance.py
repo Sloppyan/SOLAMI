@@ -253,7 +253,7 @@ if __name__ == "__main__":
     os.makedirs(save_dir, exist_ok=True)
     logger = get_logger(os.path.join(save_dir, "calculate_mean_variance.log"))
     
-    humanml3d_data_dir = "SOLAMI_data/HumanML3D/processed_data"
+    humanml3d_data_dir = "SOLAMI_data/HumanML3D/unified_data"
     humanml3d_data = get_humanml3d_data(humanml3d_data_dir, logger)
     mean_variance_dict_hml3d = calculate_mean_variance(humanml3d_data)
     np.savez(os.path.join(save_dir, "humanml3d_mean_variance.npz"), **mean_variance_dict_hml3d)
@@ -265,64 +265,71 @@ if __name__ == "__main__":
     
     del humanml3d_data
     
-    inter_x_data_dir = "SOLAMI_data/Inter-X/processed_data"
-    inter_x_data = get_inter_x_data(inter_x_data_dir, logger)
-    mean_variance_dict_inter = calculate_mean_variance(inter_x_data)
-    np.savez(os.path.join(save_dir, "inter_x_mean_variance.npz"), **mean_variance_dict_inter)
-    logger.info(f"Inter-X data num: {mean_variance_dict_inter['num']}")
-    # logger.info('STD')
-    # logger.info(json.dumps(inter_x_std.tolist()))
-    # logger.info('MEAN')
-    # logger.info(json.dumps(inter_x_mean.tolist()))
-    
-    del inter_x_data
-    
-    dlp_data_dir = "SOLAMI_data/DLP-MoCap/processed_data"
-    dlp_data = get_inter_x_data(dlp_data_dir, logger)
-    mean_variance_dict_dlp = calculate_mean_variance(dlp_data)
-    np.savez(os.path.join(save_dir, "dlp_mean_variance.npz"), **mean_variance_dict_dlp)
-    logger.info(f"DLP data num: {mean_variance_dict_dlp['num']}")
-    # logger.info('STD')
-    # logger.info(json.dumps(dlp_std.tolist()))
-    # logger.info('MEAN')
-    # logger.info(json.dumps(dlp_mean.tolist()))
-    
-    # mean_variance_dict_hml3d = np.load(os.path.join(save_dir, "humanml3d_mean_variance.npz"), allow_pickle=True)
-    # mean_variance_dict_inter = np.load(os.path.join(save_dir, "inter_x_mean_variance.npz"), allow_pickle=True)
-    # mean_variance_dict_dlp = np.load(os.path.join(save_dir, "dlp_mean_variance.npz"), allow_pickle=True)
-    
-    
-    # del dlp_data
-    
-    # compute overall mean and std
-    
-    all_num = mean_variance_dict_dlp['num'] + mean_variance_dict_inter['num'] + mean_variance_dict_hml3d['num']
-    final_mean_variance_dicts = copy.deepcopy(mean_variance_dict_inter)
-    final_mean_variance_dicts['num'] = all_num
-    for key in mean_variance_dict_inter.keys():
-        if key == 'num':
-            continue
-        if 'mean' not in mean_variance_dict_inter[key]:
-            for sub_key in mean_variance_dict_inter[key].keys():
-                if sub_key in ['ske_relative_pos', 'ske_relative_cont6d', 'smplx_relative_pos', 'smplx_relative_cont6d']:
-                    final_mean_variance_dicts[key][sub_key] = mean_variance_dict_inter[key][sub_key]
-                else:
-                    final_mean_variance_dicts[key][sub_key]['mean'] = (mean_variance_dict_hml3d[key][sub_key]['mean'] * mean_variance_dict_hml3d['num'] + \
-                                                                    mean_variance_dict_inter[key][sub_key]['mean'] * mean_variance_dict_inter['num'] + \
-                                                                    mean_variance_dict_dlp[key][sub_key]['mean'] * mean_variance_dict_dlp['num']) / all_num
-                    final_mean_variance_dicts[key][sub_key]['std'] = (mean_variance_dict_hml3d[key][sub_key]['std'] * mean_variance_dict_hml3d['num'] + \
-                                                                    mean_variance_dict_inter[key][sub_key]['std'] * mean_variance_dict_inter['num'] + 
-                                                                    mean_variance_dict_dlp[key][sub_key]['std'] * mean_variance_dict_dlp['num']) / all_num
-        else:
-            final_mean_variance_dicts[key]['mean'] = (mean_variance_dict_hml3d[key]['mean'] * mean_variance_dict_hml3d['num'] + \
-                                                      mean_variance_dict_inter[key]['mean'] * mean_variance_dict_inter['num'] + \
-                                                      mean_variance_dict_dlp[key]['mean'] * mean_variance_dict_dlp['num']) / all_num
-            final_mean_variance_dicts[key]['std'] = (mean_variance_dict_hml3d[key]['std'] * mean_variance_dict_hml3d['num'] + \
-                                                     mean_variance_dict_inter[key]['std'] * mean_variance_dict_inter['num'] + 
-                                                     mean_variance_dict_dlp[key]['std'] * mean_variance_dict_dlp['num']) / all_num
+    # inter_x_data_dir = "SOLAMI_data/Inter-X/processed_data"
+    # inter_x_data = get_inter_x_data(inter_x_data_dir, logger)
+    # mean_variance_dict_inter = calculate_mean_variance(inter_x_data)
+    # np.savez(os.path.join(save_dir, "inter_x_mean_variance.npz"), **mean_variance_dict_inter)
+    # logger.info(f"Inter-X data num: {mean_variance_dict_inter['num']}")
+    # # logger.info('STD')
+    # # logger.info(json.dumps(inter_x_std.tolist()))
+    # # logger.info('MEAN')
+    # # logger.info(json.dumps(inter_x_mean.tolist()))
+    # 
+    # del inter_x_data
+    # 
+    # dlp_data_dir = "SOLAMI_data/DLP-MoCap/processed_data"
+    # dlp_data = get_inter_x_data(dlp_data_dir, logger)
+    # mean_variance_dict_dlp = calculate_mean_variance(dlp_data)
+    # np.savez(os.path.join(save_dir, "dlp_mean_variance.npz"), **mean_variance_dict_dlp)
+    # logger.info(f"DLP data num: {mean_variance_dict_dlp['num']}")
+    # # logger.info('STD')
+    # # logger.info(json.dumps(dlp_std.tolist()))
+    # # logger.info('MEAN')
+    # # logger.info(json.dumps(dlp_mean.tolist()))
+    # 
+    # # mean_variance_dict_hml3d = np.load(os.path.join(save_dir, "humanml3d_mean_variance.npz"), allow_pickle=True)
+    # # mean_variance_dict_inter = np.load(os.path.join(save_dir, "inter_x_mean_variance.npz"), allow_pickle=True)
+    # # mean_variance_dict_dlp = np.load(os.path.join(save_dir, "dlp_mean_variance.npz"), allow_pickle=True)
+    # 
+    # # del dlp_data
+    # 
+    # # compute overall mean and std
+    # 
+    # all_num = mean_variance_dict_dlp['num'] + mean_variance_dict_inter['num'] + mean_variance_dict_hml3d['num']
+    # final_mean_variance_dicts = copy.deepcopy(mean_variance_dict_inter)
+    # final_mean_variance_dicts['num'] = all_num
+    # for key in mean_variance_dict_inter.keys():
+    #     if key == 'num':
+    #         continue
+    #     if 'mean' not in mean_variance_dict_inter[key]:
+    #         for sub_key in mean_variance_dict_inter[key].keys():
+    #             if sub_key in ['ske_relative_pos', 'ske_relative_cont6d', 'smplx_relative_pos', 'smplx_relative_cont6d']:
+    #                 final_mean_variance_dicts[key][sub_key] = mean_variance_dict_inter[key][sub_key]
+    #             else:
+    #                 final_mean_variance_dicts[key][sub_key]['mean'] = (mean_variance_dict_hml3d[key][sub_key]['mean'] * mean_variance_dict_hml3d['num'] + \
+    #                                                                 mean_variance_dict_inter[key][sub_key]['mean'] * mean_variance_dict_inter['num'] + \
+    #                                                                 mean_variance_dict_dlp[key][sub_key]['mean'] * mean_variance_dict_dlp['num']) / all_num
+    #                 final_mean_variance_dicts[key][sub_key]['std'] = (mean_variance_dict_hml3d[key][sub_key]['std'] * mean_variance_dict_hml3d['num'] + \
+    #                                                                 mean_variance_dict_inter[key][sub_key]['std'] * mean_variance_dict_inter['num'] + 
+    #                                                                 mean_variance_dict_dlp[key][sub_key]['std'] * mean_variance_dict_dlp['num']) / all_num
+    #     else:
+    #         final_mean_variance_dicts[key]['mean'] = (mean_variance_dict_hml3d[key]['mean'] * mean_variance_dict_hml3d['num'] + \
+    #                                                   mean_variance_dict_inter[key]['mean'] * mean_variance_dict_inter['num'] + \
+    #                                                   mean_variance_dict_dlp[key]['mean'] * mean_variance_dict_dlp['num']) / all_num
+    #         final_mean_variance_dicts[key]['std'] = (mean_variance_dict_hml3d[key]['std'] * mean_variance_dict_hml3d['num'] + \
+    #                                                  mean_variance_dict_inter[key]['std'] * mean_variance_dict_inter['num'] + 
+    #                                                  mean_variance_dict_dlp[key]['std'] * mean_variance_dict_dlp['num']) / all_num
         
-    # all_data = np.concatenate([humanml3d_data, inter_x_data, dlp_data], axis=0)
-    # all_mean, all_std, all_num = calculate_mean_variance(all_data)
+    # # all_data = np.concatenate([humanml3d_data, inter_x_data, dlp_data], axis=0)
+    # # all_mean, all_std, all_num = calculate_mean_variance(all_data)
+    # np.savez(os.path.join(save_dir, "all_mean_variance.npz"), **final_mean_variance_dicts)
+    # 
+    # logger.info(f"All data num: {all_num}")
+    # print(final_mean_variance_dicts)
+
+    # compute overall mean and std based only on HumanML3D data
+    final_mean_variance_dicts = copy.deepcopy(mean_variance_dict_hml3d)
+    all_num = mean_variance_dict_hml3d['num']
     np.savez(os.path.join(save_dir, "all_mean_variance.npz"), **final_mean_variance_dicts)
     
     logger.info(f"All data num: {all_num}")
