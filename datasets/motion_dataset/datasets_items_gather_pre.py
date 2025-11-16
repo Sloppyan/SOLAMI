@@ -57,6 +57,7 @@ def get_humanml3d_items(save_path, logger):
         try:
             motion_file_name = file_names[idx].replace('.txt', '')
             joint_dir_tmp = os.path.join(joints_dir, motion_file_name + '.npz')
+            logger.info(f"motion_file_name is {motion_file_name}, joint_dir_tmp is {joint_dir_tmp}")
             if not os.path.exists(joint_dir_tmp):
                 continue
             # feat = np.load(joint_dir_tmp, allow_pickle=True)
