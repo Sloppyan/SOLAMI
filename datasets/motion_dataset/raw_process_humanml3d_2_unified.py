@@ -765,8 +765,8 @@ if __name__ == "__main__":
     # Get offsets of target skeleton
     # we random choose one
     example_data = np.load('SOLAMI_data/HumanML3D/HumanML3D_no_mirror/000021.npy')
-    example_data = example_data['pose_np']
-    example_data = example_data[:, body_joints_id + hand_joints_id, :]
+    # example_data = example_data['pose_np']
+    # example_data = example_data[:, body_joints_id + hand_joints_id, :]
     example_data = example_data.reshape(len(example_data), -1, 3)
     example_data = torch.from_numpy(example_data)
 
